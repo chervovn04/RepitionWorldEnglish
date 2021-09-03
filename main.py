@@ -3,10 +3,8 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 import datetime
 from mysql.connector import connect, Error
 
-
-token = '1808453297:AAGKYRcOfWcsZJIR9uibUYW8n8rfKLGo1pg'
-for_test = r"python C:\Users\cherv\Python\telegram.bots\chervovn04_zero_test_bot\bot_v0\main.py"
-
+root_password = '<your root password>'
+token = '<your bot token>'
 
 def to_format(text: str, start: datetime.date, end: datetime.date) -> dict:
     return {'text': text, 'start': start, 'end': end}
@@ -17,14 +15,14 @@ def task_str(values):
 
 
 def change_query(query: str, vars=()) -> None:
-    with connect(host="localhost", user='root', password='ntsw041op@', database='test2') as connection:
+    with connect(host="localhost", user='root', password=root_password, database='test2') as connection:
         with connection.cursor() as cursor:
             cursor.execute(query, vars)
             connection.commit()
 
 
 def show_query(query: str) -> list:
-    with connect(host="localhost", user='root', password='ntsw041op@', database='test2') as connection:
+    with connect(host="localhost", user='root', password=root_password, database='test2') as connection:
         with connection.cursor() as cursor:
             cursor.execute(query)
             res = []
@@ -116,7 +114,32 @@ def watch(update: Update, context: CallbackContext) -> None:
 
 
 def main():
-    st = f'\''
+    # test2
+    #   action
+    #       id
+    #       user_id
+    #       text - event description
+    #       start - start of event
+    #       end - end of event
+    with connect(host="localhost", user='root', password=root_password) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute('create database if not exists test2')
+            connection.commit()
+    with connect(host="localhost", user='root', password=root_password, database='test2') as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+            create table if not exists actions(
+                id INT NOT NULL,
+                user_id INT NOT NULL,
+                text VARCHAR(256),
+                start DATE,
+                end DATE,
+                PRIMARY KEY (id)
+            )
+            """)
+            connection.commit()
+
+
     updater = Updater(token)
     dispatcher = updater.dispatcher
 
